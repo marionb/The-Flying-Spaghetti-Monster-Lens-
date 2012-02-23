@@ -7,10 +7,6 @@ as applications and applets.
   import javax.swing.*;
   import java.awt.BorderLayout;
   import java.awt.Color;
-  /** bjdoc A base to write programs that can run as both applications
-      and applets. ejdoc 
-   @=<br/> Part of the <a href="http://www.qgd.uzh.ch">QGD</a> base library.@>
-  */
   public class Dual extends JApplet implements Runnable, ActionListener,
     WindowListener
     { private static final long serialVersionUID = 42;

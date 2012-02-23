@@ -27,13 +27,8 @@
   Cosm cosm;  @/
   PlotPix plotPix;
   PlotMass plotMass;
-  PlotEnc plotEnc;
-  PlotArriv plotArriv;
   PlotPoten plotPoten;
-  PlotPoints plotPoints;
-  PlotMag plotMag;
-  PlotHistog plotHistog;
-
+  PlotArriv plotArriv;
   
 
 @ @<Fields and constructor for |Lenses|@>=
@@ -48,12 +43,8 @@
 @ @<Initialize plots and parameters@>=
   plotPix    = new PlotPix();
   plotMass   = new PlotMass();
-  plotEnc    = new PlotEnc();
-  plotArriv  = new PlotArriv();
   plotPoten  = new PlotPoten();
-  plotPoints = new PlotPoints();
-  plotMag = new PlotMag();
-  plotHistog = new PlotHistog();  @/
+  plotArriv  = new PlotArriv();
   mods = 100; nummod = 0; begun = false; sfname = null; nran = 0;
   this.nthreads = nthreads;
   this.useNative = useNative;
@@ -61,12 +52,8 @@
 @ @<Reinitialize plots and parameters@>=
   plotPix.reset();
   plotMass.reset();
-  plotEnc.reset();
-  plotArriv.reset();
   plotPoten.reset();
-  plotPoints.reset();
-  plotMag.reset();
-  plotHistog.reset();  @/
+  plotArriv.reset();
   mods = 100; nummod = 0; begun = false; sfname = null;
 
 
@@ -355,12 +342,8 @@
   plotPix.update(survey);
   if (nummod > 0)
     { plotMass.update(survey);
-      plotEnc.update(survey);
-      plotArriv.update(survey);
       plotPoten.update(survey);
-      plotPoints.update(survey);
-      plotMag.update(survey);
-      plotHistog.update(survey);
+      plotArriv.update(survey);
     }
 
 

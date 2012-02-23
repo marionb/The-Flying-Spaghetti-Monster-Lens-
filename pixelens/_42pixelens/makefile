@@ -9,8 +9,8 @@ PixeLens: $(JAVAFILES)
 $(JAVAFILES): %.java : %.w
 	javatangle $^
 
-Illus.java: %.java : %.w Illus.ch
-	javatangle $^
+# Illus.java: %.java : %.w Illus.ch
+#	javatangle $^
 
 # PlotEnc.java: %.java : %.w PlotEnc.ch
 #	javatangle $^

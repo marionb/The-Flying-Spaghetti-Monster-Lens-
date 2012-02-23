@@ -26,7 +26,7 @@ jarcmf:
 
 jarumf:
 	jar umf  $(PKG)/manifest $(PUB)/$(JAR).jar \
-                 $(PKG)/*.w $(PKG)/*.ch $(PKG)/*.class \
+                 $(PKG)/*.w $(PKG)/*.class \
                  $(PKG)/makefile $(PKG)/manifest \
                  makefile README
 

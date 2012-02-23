@@ -123,12 +123,8 @@
   FigDeck pd = new FigDeck();  @/
   pd.addFigure("pixellation",lenses.plotPix);
   pd.addFigure("mass",lenses.plotMass);
-  pd.addFigure("enc mass",lenses.plotEnc);
-  pd.addFigure("arrival time",lenses.plotArriv);
   pd.addFigure("potential",lenses.plotPoten);
-  pd.addFigure("steepness",lenses.plotPoints);
-  pd.addFigure("magnification",lenses.plotMag);
-  pd.addFigure("time delays",lenses.plotHistog);  @/
+  pd.addFigure("arrival time",lenses.plotArriv);
   mainPane.add("East",pd);
 
 
