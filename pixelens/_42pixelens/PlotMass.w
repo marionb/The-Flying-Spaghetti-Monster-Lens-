@@ -60,7 +60,7 @@
   if (Dual.mode() != 0)
     { obj_txt.set(1); cstep_txt.set(-2.512);  zm_txt.set(1);
     }
-  nobj = 1; fname = new String("mass");  @/
+  nobj = 1;
   obj = 0; cstep = -2.512; zm = 1;
 
 @ @<Generic stuff in |PlotMass|@>=
@@ -71,8 +71,7 @@
 
 @ @<Event handler in |PlotMass|@>=
   public void actionPerformed(ActionEvent event)
-    { super.actionPerformed(event);
-      Object src = event.getSource();
+    { Object src = event.getSource();
       if (src instanceof JComboBox)
         { String str = (String) choice.getSelectedItem();
           if (str.compareTo("tot")==0)  chfl = 1;
@@ -180,82 +179,3 @@
         }
     }
 
-@ @<Plotting code in |PlotMass|@>=
-  protected void annotText(FileWriter p) throws IOException
-    { lens = (LensBase) surv.elementAt(obj);  @/
-      DecimalFormat fmd = new DecimalFormat("0.00");  @/
-      DecimalFormat fme = new DecimalFormat("0.00E0");  @/
-      int Z = lens.Z; int L = lens.L; int S = lens.S;  @/
-      int N = 2*L+1; double a = lens.a; double r = L*a;  @/
-      double sigcrit = 1/(lens.sol[lens.nunk]*lens.tscale)*lens.cdscale;  @/
-      p.write("sigcrit: "+fme.format(sigcrit)+" M_sol/arcsec^2\n");  @/
-      p.write("grid size: "+N+" "+N+"\n");  @/
-      p.write("x range: "+fmd.format(-r)+" "+fmd.format(r)+"\n");
-      p.write("y range: "+fmd.format(-r)+" "+fmd.format(r)+"\n");  @/
-      double ktot = 0;
-      if (chfl < 4)
-        { for (int j=Z-1-S/2; j>=S/2; j-=S)
-            { for (int i=S/2; i<Z; i+=S)
-                { p.write(fmd.format(grid[i][j])+" ");
-                  // p.write(i+" "+j+"   ");
-                  ktot += grid[i][j];
-                }
-              p.write("\n");
-            }
-          p.write("Total (kappa x area) = "+fmd.format(ktot*a*a)+"\n");
-        }
-      else if (chfl==4)
-        { synchronized (lens)
-            { @<Write mass map with errors@>
-            }
-        }
-      else if (chfl==5)
-        { synchronized (lens)
-            { @<Write ensemble of mass maps@>
-            }
-        }
-    }
-
-@ @<Write mass map with errors@>=
-  for (int j=L; j>=-L; j--)
-    { for (int i=-L; i<=L; i++)
-        { int n = lens.pmap[L+i][L+j];
-          if (n != 0)
-            { int M;
-              for (M=0; M<lens.ensem.length && lens.ensem[M]!= null; M++);
-              if (M<1) return;
-                { double[] lis = new double[M];
-                  for (int m=0; m<M; m++)
-                    { lis[m] = lens.ensem[m][n];
-                      for (int q=m; q>0 && lis[q]<lis[q-1]; q--)
-                        { double tmp = lis[q];
-                          lis[q] = lis[q-1]; lis[q-1] = tmp;
-                        }
-                    }
-                  double lo,md,hi;
-                  lo = lis[(int)(0.05*M)];
-                  md = lis[(int)(0.5*M)];
-                  hi = lis[(int)(0.95*M)];  @/
-                  p.write(fmd.format(lo)+" "+fmd.format(md)+" "+
-                          fmd.format(hi)+"   ");
-                }
-            }
-          else  p.write("0    0    0      ");
-        }
-      p.write("\n");
-    }
-
-
-@ @<Write ensemble of mass maps@>=
-  for (int m=0; m<lens.ensem.length && lens.ensem[m]!= null; m++)
-    { double[] sol = lens.ensem[m];
-      p.write("\n");
-      for (int j=L; j>=-L; j--)
-        { for (int i=-L; i<=L; i++)
-            { int n = lens.pmap[L+i][L+j];
-              if (n != 0) p.write(fmd.format(sol[n])+" ");
-              else p.write("0.0 ");
-            }
-          p.write("\n");
-        }
-    }

@@ -52,11 +52,9 @@
 
 @ @<Initialize fields in |PlotArriv|@>=
   surv = null; lens = null;
-  nobj = 1; fname = new String("arriv");
-  if (Dual.mode() != 0)
-    { obj_txt.set(1);  sour_txt.set(1);
-      cstep_txt.set(0);  zm_txt.set(1);
-    }
+  nobj = 1;
+  obj_txt.set(1);  sour_txt.set(1);
+  cstep_txt.set(0);  zm_txt.set(1);
   obj = 0; sour = 0; cstep =0; zm = 1;
 
 @ @<Generic stuff in |PlotArriv|@>=
@@ -67,8 +65,7 @@
 
 @ @<Event handler in |PlotArriv|@>=
   public void actionPerformed(ActionEvent event)
-    { super.actionPerformed(event);
-      if (surv!=null)
+    { if (surv!=null)
         if (event.getSource() instanceof InputField)
           { @<Read the |InputField|s in |PlotArriv|@>
             plot();

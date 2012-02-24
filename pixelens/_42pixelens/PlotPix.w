@@ -47,8 +47,7 @@ its descendant |Lens|.
 
 @ @<Initialize fields in |PlotPix|@>=
   surv = null; lens = null;  @/
-  fname = new String("pix");  @/
-  if (Dual.mode() != 0) obj_txt.set(1);
+  obj_txt.set(1);
   nobj = 1; obj = 0;
   
   
@@ -63,8 +62,7 @@ its descendant |Lens|.
 
 @ @<Event handler in |PlotPix|@>=
   public void actionPerformed(ActionEvent event)
-    { super.actionPerformed(event);
-      if (surv!=null)
+    { if (surv!=null)
         if (event.getSource() instanceof InputField)
           { obj = obj_txt.readInt(1,nobj) - 1;  @/
             plot();

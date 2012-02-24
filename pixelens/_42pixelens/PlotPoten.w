@@ -54,7 +54,7 @@
 
 @ @<Initialize fields in |PlotPoten|@>=
   surv = null; lens = null;  @/
-  nobj = 1; fname = new String("poten");
+  nobj = 1;
   if (Dual.mode() != 0)
     { obj_txt.setText("1");  cstep_txt.setText("0");
       exag_txt.setText("1");  zm_txt.setText("1");
@@ -69,8 +69,7 @@
 
 @ @<Event handler in |PlotPoten|@>=
   public void actionPerformed(ActionEvent event)
-    { super.actionPerformed(event);
-      if (surv!=null)
+    { if (surv!=null)
         if (event.getSource() instanceof InputField)
           { @<Read the |InputField|s in |PlotPoten|@>
             plot();
@@ -143,21 +142,4 @@
   lev = new double[ns];
   for (int l=0; l<ns; l++) lev[l] = tmin+l*cstep;
 
-
-@ @<Plotting code in |PlotPoten|@>=
-  protected void annotText(FileWriter p) throws IOException
-    { lens = (LensBase) surv.elementAt(obj);  @/
-      DecimalFormat fmd = new DecimalFormat("0.00");  @/
-      DecimalFormat fme = new DecimalFormat("0.00E0");  @/
-      int Z = lens.Z; int L = lens.L; int S = lens.S;  @/
-      int n = 2*L+1; double a = lens.a; double r = L*a;  @/
-      p.write("grid size: "+n+" "+n+"\n");  @/
-      p.write("x range: "+fmd.format(-r)+" "+fmd.format(r)+"\n");
-      p.write("y range: "+fmd.format(-r)+" "+fmd.format(r)+"\n");  @/
-      for (int j=S/2; j<Z; j+=S)
-        { for (int i=S/2; i<Z; i+=S)
-            p.write(fmd.format(-lens.poten_grid[i][Z-1-j])+" ");
-          p.write("\n");
-        }
-    }
 
