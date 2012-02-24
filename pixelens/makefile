@@ -11,18 +11,13 @@ compile:
 
 jarcf:
 	jar cMf  $(PUB)/$(JAR).jar \
-                 $(PKG)/*.w $(PKG)/*.ch $(PKG)/*.class \
+                 $(PKG)/*.w $(PKG)/*.class \
                  $(PKG)/makefile
 
 jaruf:
 	jar uMf   $(PUB)/$(JAR).jar \
                   $(PKG)/*.w $(PKG)/*.ch $(PKG)/*.class \
                   $(PKG)/makefile
-
-jarcmf:
-	jar cmf  $(PKG)/manifest $(PUB)/$(JAR).jar \
-                 $(PKG)/*.w $(PKG)/*.ch $(PKG)/*.class \
-                 $(PKG)/makefile $(PKG)/manifest
 
 jarumf:
 	jar umf  $(PKG)/manifest $(PUB)/$(JAR).jar \
