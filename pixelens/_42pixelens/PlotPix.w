@@ -5,9 +5,8 @@ its descendant |Lens|.
 @(PlotPix.java@>=
   package _42pixelens;
   @<Imports for |PlotPix|@>
-  public class PlotPix extends Figure implements ActionListener
+  public class PlotPix extends Figure
     { @<Generic stuff in |PlotPix|@>
-      @<Event handler in |PlotPix|@>
       @<Plotting code in |PlotPix|@>
     }
 
@@ -22,18 +21,13 @@ its descendant |Lens|.
 @ Most of the generic-stuff code will be repeated verbatim.  Only
 |obj_txt| needs individual attention here.
 @<Generic stuff in |PlotPix|@>=
-  Vector surv;  LensBase lens;  @/
+  LensBase lens;  @/
   int nobj,obj;  InputField obj_txt;
 
 
 @ @<Generic stuff in |PlotPix|@>=
   public PlotPix()
     { super(320,320);
-      System.out.println("mode is "+Dual.mode());
-      if (Dual.mode() != 0)
-        { obj_txt = new InputField("obj",1," ",hook);
-          obj_txt.addActionListener(this);
-        }
       @<Initialize fields in |PlotPix|@>
     }
 
@@ -46,33 +40,20 @@ its descendant |Lens|.
 
 
 @ @<Initialize fields in |PlotPix|@>=
-  surv = null; lens = null;  @/
-  obj_txt.set(1);
-  nobj = 1; obj = 0;
-  
+  lens = null;
   
 
 @ @<Generic stuff in |PlotPix|@>=
-  public void update(Vector surv)
-    { this.surv = surv; nobj = surv.size(); 
+  public void update(LensBase lens)
+    { this.lens = lens;
       plot();
     }
 
 
 
-@ @<Event handler in |PlotPix|@>=
-  public void actionPerformed(ActionEvent event)
-    { if (surv!=null)
-        if (event.getSource() instanceof InputField)
-          { obj = obj_txt.readInt(1,nobj) - 1;  @/
-            plot();
-          }
-    }
-
 @ @<Plotting code in |PlotPix|@>=
   void plot()
-    { lens = (LensBase) surv.elementAt(obj);  @/
-      int L = lens.L; double a = lens.a;  @/
+    { int L = lens.L; double a = lens.a;  @/
       erase(); text = new StringBuffer();
       drawAxes((L+1)*a);
       for (int l=0; l<=L; l++)
@@ -93,14 +74,6 @@ its descendant |Lens|.
           for (int i=0; i<data.length; i++)
             drawPoint(data[i][1],data[i][2]);
         }
-      @<Write out lens scales@>
       repaint();
     }
 
-@ @<Write out lens scales@>=
-  DecimalFormat fmd = new DecimalFormat("0.00");  @/
-  DecimalFormat fme = new DecimalFormat("0.00E0");  @/
-  text.append("time scale: "+fmd.format(lens.tscale)+" g days/arcsec^2 \n");
-  text.append("ang dist: "+fmd.format(lens.dlscale)+" g kpc/arcsec \n");
-  text.append("crit dens: "+fme.format(lens.cdscale)+" g M_sol/arcsec^2 \n");
-  text.append("Delta t (astrom): "+fmd.format(lens.dt_astrom)+" g days \n");

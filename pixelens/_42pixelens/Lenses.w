@@ -318,7 +318,8 @@
 
 
 @ @<Update the plots@>=
-  plotPix.update(survey);
+  Lens llens = (Lens) survey.elementAt(0);
+  plotPix.update(llens);
   if (nummod > 0)
     { plotMass.update(survey);
       plotPoten.update(survey);
