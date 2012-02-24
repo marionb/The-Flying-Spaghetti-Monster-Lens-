@@ -145,8 +145,7 @@
     }
   else if (tok.compareTo("models")==0) mods = parse_int();
   else if (tok.compareTo("random")==0) nran = parse_int();
-  else if (tok.compareTo("double")==0 || tok.compareTo("quad")==0 ||
-           tok.compareTo("multi")==0)
+  else if (tok.compareTo("multi")==0)
     { @<Read data for a multiple-image system@>
     }
   else if (tok.compareTo("delay")==0)
@@ -190,10 +189,7 @@
 
 @ @<Read data for a multiple-image system@>=
   if (zflag==0) throw new ErrorMsg("need redshift or zlens");
-  int nim = 0;
-  if (tok.compareTo("double")==0) nim = 2;
-  else if (tok.compareTo("quad")==0) nim = 4;
-  else if (tok.compareTo("multi")==0) nim = parse_int();
+  int nim = parse_int();
   double[][] ndata = new double[nim][8];
   if (zflag==1)
     { double zs = parse_double();
@@ -247,11 +243,9 @@
     { @<Work out simplex-packing sizes@>
       if (simp != null) simp.interrupt();
       simp = new Simpwalk(nthreads);
-      // |if (useNative) SimpwalkNative(nthreads)|
       simp.init(nsiz);
       simp.initRan(nran);
       @<Put lensing constraints into simplex@>
-      @<Put common-$h$ constraints into simplex@>
     }
 
 @ @<Work out simplex-packing sizes@>=
@@ -286,21 +280,6 @@
        System.out.println("Simplex "+lens.nunk+" "+
          lens.geq.size()+" "+lens.leq.size()+" "+lens.eq.size());
     }
-
-@ @<Put common-$h$ constraints into simplex@>=
-  for (int l=1; l<survey.size(); l++)
-    { Lens lens1 = (Lens) survey.elementAt(l-1);
-      Lens lens2 = (Lens) survey.elementAt(l);   @/
-      double[] row = new double[nsiz+1];
-      for (int i=0; i<row.length; i++) row[i] = 0;
-      row[hi[l-1]] = lens1.tscale;  row[hi[l]] = -lens2.tscale;  @/
-      simp.set_eq(row);
-    }
-
-
-
-
-
 
 
 @ @<Searching for models@>=
