@@ -1,43 +1,64 @@
-WFILES=$(filter-out collate.%, $(wildcard *.w))
-JAVAFILES=$(patsubst %.w,%.java, $(WFILES))
+all:	PixeLens.java Illus.java \
+        LensBase.java LensPix.java LensPrior.java LensData.java \
+        LensPost.java Lens.java Lenses.java \
+        PlotPix.java PlotMass.java PlotPoten.java PlotArriv.java \
+        Poten.java PtMass.java Shear.java Cosm.java Simpwalk.java
+	$(JAVAC) PixeLens.java
 
-all: PixeLens
+PixeLens.java: PixeLens.w
+	javatangle PixeLens.w
 
-PixeLens: $(JAVAFILES)
-	$(JAVAC) $^
+Illus.java: Illus.w
+	javatangle Illus.w
 
-$(JAVAFILES): %.java : %.w
-	javatangle $^
+LensBase.java: LensBase.w
+	javatangle LensBase.w
 
-# Illus.java: %.java : %.w Illus.ch
-#	javatangle $^
+LensPix.java: LensPix.w
+	javatangle LensPix.w
 
-# PlotEnc.java: %.java : %.w PlotEnc.ch
-#	javatangle $^
+LensPrior.java: LensPrior.w
+	javatangle LensPrior.w
 
-# PlotPoints.java: %.java : %.w %.ch
-#	javatangle $^
+LensData.java: LensData.w
+	javatangle LensData.w
 
-# PixeLens.java: %.java : %.w PixeLens-sml.ch
-#	javatangle $^
+LensPost.java: LensPost.w
+	javatangle LensPost.w
 
-# PlotMass.java: %.java : %.w PlotMass-sml.ch
-#	javatangle $^
+Lens.java: Lens.w
+	javatangle Lens.w
 
-# PlotEnc.java: %.java : %.w PlotEnc-sml.ch
-#	javatangle $^
+Lenses.java: Lenses.w
+	javatangle Lenses.w
 
-#PlotArriv.java: %.java : %.w PlotArriv-sml.ch
-#	javatangle $^
+PlotPix.java: PlotPix.w
+	javatangle PlotPix.w
 
-#PlotPoten.java: %.java : %.w PlotPoten-sml.ch
-#	javatangle $^
+PlotMass.java: PlotMass.w
+	javatangle PlotMass.w
 
-#PlotHistog.java: %.java : %.w PlotHistog-sml.ch
-#	javatangle $^
+PlotPoten.java: PlotPoten.w
+	javatangle PlotPoten.w
 
-# Lenses.java: %.java : %.w Lenses-sml.ch
-#	javatangle $^
+PlotArriv.java: PlotArriv.w
+	javatangle PlotArriv.w
+
+Poten.java: Poten.w
+	javatangle Poten.w
+
+PtMass.java: PtMass.w
+	javatangle PtMass.w
+
+Shear.java: Shear.w
+	javatangle Shear.w
+
+Cosm.java: Cosm.w
+	javatangle Cosm.w
+
+Simpwalk.java: Simpwalk.w
+	javatangle Simpwalk.w
+
 
 clean:
 	rm -f *.class *.log *.dvi *.toc *.tex *.java *~
