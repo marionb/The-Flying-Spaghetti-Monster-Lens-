@@ -32,14 +32,12 @@ packages itself with various interactive things inside a |JPanel|.
     { return getMinimumSize();
     }
 
-@ If the program is standalone, the file output buttons |eps| and
-|txt| go at the bottom, if it's an applet those buttons don't appear.
-Above that |this|, and above that the |JPanel hook| for attaching
+@ Show |this|, and above it the |JPanel hook| for attaching
 interactive stuff.  Space filler on top.
 
 @<Fields and constructor for |FigBase|@>=
   protected JPanel hook;  @/
-  JButton eps,txt; JPanel panel;
+  JPanel panel;
   public JPanel getPanel()
     { return panel;
     }
@@ -55,10 +53,6 @@ interactive stuff.  Space filler on top.
     { this.ht = ht; this.wd = wd;  @/
       setBackground(Color.white);  @/
       panel = new JPanel();  hook = new JPanel();
-      if (Dual.mode() == 1)
-        { eps = new JButton("eps out");  eps.addActionListener(this);  @/
-          txt = new JButton("txt out");  txt.addActionListener(this);
-        }
       @<Bury |hook|, |this|, |eps|, |txt| in |panel|@>
       @<Initialize fields in |FigBase|@>
     }
@@ -67,7 +61,7 @@ interactive stuff.  Space filler on top.
   JPanel p = new JPanel();  p.setLayout(new BorderLayout());
   p.add("North",this);
   if (Dual.mode() == 1)
-    { JPanel bp = new JPanel();  bp.add(eps);  bp.add(txt);
+    { JPanel bp = new JPanel();
       p.add("South",bp);
     }
   JPanel q = new JPanel();  q.setLayout(new BorderLayout());  @/
@@ -266,8 +260,6 @@ painting.
 @<Screen and file output from |FigBase|@>=
   public void actionPerformed(ActionEvent event)
     { int fl=0,ieps=1,itxt=2;
-      if (event.getSource() == eps) fl = ieps;
-      if (event.getSource() == txt) fl = itxt;
       if (fl==ieps || fl==itxt)
         { @<Invoke file output dialog@>
         }
