@@ -31,6 +31,7 @@ jarumf:
                  makefile README
 
 clean:
+	rm -f Pixelens.jar
 	rm -f */*.class */*.java */*~ *~
 	rm -f */*.log */*.dvi */*.toc */*.tex */*.pdf
 	rm -f qgd/*/*.class qgd/*/*.java qgd/*/*~ qgd/*~

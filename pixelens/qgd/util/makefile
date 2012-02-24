@@ -1,4 +1,4 @@
-all: Dual.class FigDeck.class InputField.class Console.class Misc.class ErrorMsg.class
+all: Dual.class FigDeck.class InputField.class Console.class Misc.class Dialogs.class ErrorMsg.class
 
 Dual.class: Dual.java
 	$(JAVAC) Dual.java
@@ -9,7 +9,7 @@ Dual.java: Dual.w
 FigDeck.class: FigDeck.java Figure.class
 	$(JAVAC) FigDeck.java
 
-Figure.class: Figure.java FigBase.java Mesh.java Dialogs.class ErrorMsg.java
+Figure.class: Figure.java FigBase.java Mesh.java
 	$(JAVAC) Figure.java
 
 FigDeck.java: FigDeck.w
@@ -21,20 +21,20 @@ Figure.java: Figure.w
 FigBase.java: FigBase.w
 	javatangle FigBase.w
 
-Dialogs.class: Dialogs.java
-	$(JAVAC) Dialogs.java
-
 Mesh.java: Mesh.w
 	javatangle Mesh.w
-
-Dialogs.java: Dialogs.w
-	javatangle Dialogs.w
 
 ErrorMsg.class: ErrorMsg.java
 	$(JAVAC) ErrorMsg.java
 
 ErrorMsg.java: ErrorMsg.w
 	javatangle ErrorMsg.w
+
+Dialogs.class: Dialogs.java
+	$(JAVAC) Dialogs.java
+
+Dialogs.java: Dialogs.w
+	javatangle Dialogs.w
 
 InputField.class: InputField.java
 	$(JAVAC) InputField.java

@@ -4,12 +4,12 @@ packages itself with various interactive things inside a |JPanel|.
 @(FigBase.java@>=
   package qgd.util;
   @<Imports for |FigBase|@>
-  public class FigBase extends JPanel implements ActionListener
+  public class FigBase extends JPanel
     { private static final long serialVersionUID = 42;
       @<Fields and constructor for |FigBase|@>
       @<Coordinate-pixel conversion@>
       @<Plotting methods@>
-      @<Screen and file output from |FigBase|@>
+      @<Screen output from |FigBase|@>
     }
 
 @ @<Imports for |FigBase|@>=
@@ -75,7 +75,6 @@ interactive stuff.  Space filler on top.
   fontsize=12; ticksize=6; dotsize=4;
   list = new Vector<Object>();
   text = new StringBuffer();
-  fname = new String("output");
 
 
 @ @<Fields and constructor for |FigBase|@>=
@@ -152,7 +151,7 @@ painting.
 
 @ Now we start the output stuff.
 
-@<Screen and file output from |FigBase|@>=
+@<Screen output from |FigBase|@>=
   public synchronized void paintComponent(Graphics g)
     { super.paintComponent(g);
       int fontsize = this.fontsize;
@@ -192,109 +191,4 @@ painting.
       g.drawString(s,nx,ny);
     }
 
-
-@ @<Screen and file output from |FigBase|@>=
-  protected void annotEPS(FileWriter p) throws IOException { }
-  protected void annotText(FileWriter p) throws IOException { }
-  protected String fname;
-
-@ @<Screen and file output from |FigBase|@>=
-  synchronized void outputEPS(FileWriter p) throws IOException
-    { @<Output EPS headers@>
-      for (int i=0; i<list.size(); i++)
-        { Object o = list.elementAt(i);
-          @<Output EPS for the |list| entry@>
-        }
-      annotEPS(p);
-      @<Output EPS footers@>
-    }
-
-@ @<Output EPS for the |list| entry@>=
-  if (o instanceof Color)
-    {  Color c = (Color) o;  @/
-       p.write(c.getRed()/255.0+" "+c.getGreen()/255.0
-        +" "+c.getBlue()/255.0+" setrgbcolor\n");
-    }
-  if (o instanceof int[])
-    { int[] v = (int[]) o;
-      if (v[0]==0) p.write("newpath\n");
-      if (v[0]==1)
-        { p.write(v[1]/rscl+" "+v[2]/rscl+" "+v[3]+" 0 360 arc fill\n");
-        }
-      if (v[0]==2)
-        { p.write(v[1]/rscl+" "+v[2]/rscl+" moveto ");
-          p.write(v[3]/rscl+" "+v[4]/rscl+" lineto stroke\n");
-        }
-    } 
-  else if (o instanceof String)
-    { String s = new String((String) o);
-      int[] v = (int[]) list.elementAt(++i);   @/
-      double x,y; x = v[1]/rscl; y = v[2]/rscl;  @/
-      p.write(x+" "+y+" moveto ("+s+") \n");
-      p.write("dup stringwidth pop " + (-(1+v[3])/2.) + " mul ");
-      p.write((-(1+v[4])*fontsize/2.) + " rmoveto show\n");
-    }
-
-@ @<Output EPS headers@>=
-  p.write("%!PS-Adobe-3.0 EPSF-3.0\n");  @/
-  p.write("%%BoundingBox: 0 0 " + wd + " " + ht + "\n");  @/
-  p.write("%%EndComments\n");  @/
-  p.write("%%BeginProlog\n");  @/
-  p.write("%%EndProlog\n");  @/
-  p.write("%%Page: 1 1\n");  @/
-  p.write("\ngsave\n");  @/
-  p.write("%% /setrgbcolor {pop pop pop} def\n");
-  p.write("%% Enable previous line disable colors \n");
-  int fontsize = this.fontsize;
-  p.write("/Times-Roman findfont "+fontsize+" scalefont setfont\n");
-
-
-@ @<Output EPS footers@>=
-  p.write("grestore\n\n");  @/
-  p.write("showpage\n");  @/
-  p.write("%%EOF\n");
-
-
-
-@ Finally, code for file dialogs.
-@<Screen and file output from |FigBase|@>=
-  public void actionPerformed(ActionEvent event)
-    { int fl=0,ieps=1,itxt=2;
-      if (fl==ieps || fl==itxt)
-        { @<Invoke file output dialog@>
-        }
-    }
-
-@ @<Dummy file output dialog@>=
-  Object[] options = {"Yes, really","cancel"};
-  int resp = Dialogs.getUserChoice(this,
-             "Are you sure?","Really do this?",options);
-  Object unk = JOptionPane.showInputDialog(this,
-    "Write to file","File output",
-    JOptionPane.PLAIN_MESSAGE,null,null,filename);
-
-
-@ @<Invoke file output dialog@>=
-  String filename;
-  if (fl==ieps) filename = new String(fname+".eps");
-  else filename = new String(fname+".dat");
-  Object unk;
-  unk = Dialogs.getUserInput(this,"File output","Write to file",filename);
-  if (unk instanceof String)
-    { filename = (String) unk;
-      try
-        { FileWriter p = new FileWriter(filename);
-          if (fl==ieps) outputEPS(p);
-          else
-            { p.write(text.toString()); annotText(p);
-            }
-          p.close();  System.out.println("Saved "+filename);
-        }
-      catch (IOException e)
-        { System.out.println();
-          System.out.println("Could not save file "+filename);
-        }
-    }
-
-@i JDmac.h
 
