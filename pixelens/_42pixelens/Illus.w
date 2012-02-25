@@ -45,6 +45,7 @@
     }
   void restore()
     { txt.setText(sav);
+      choice.setSelectedIndex(0);
     }
   
 
@@ -61,7 +62,7 @@
                 { txt.setText(""); txt.setEditable(false);
                 }
               else
-                { txt.append(data.get(i));
+                { txt.setText(data.get(i));
                   txt.setEditable(false);
                 }
             }

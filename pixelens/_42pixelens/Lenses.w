@@ -21,7 +21,6 @@
   Vector survey;  Simpwalk simp;  double[] sol=null;  @/
   int mods,nummod;  // number of models
   int nthreads; // number of threads for the simplex to use
-  boolean useNative; // Use the native version of Simplex
   boolean begun; int nran;
   Cosm cosm;  @/
   PlotPix plotPix;
@@ -46,7 +45,6 @@
   plotArriv  = new PlotArriv();
   mods = 100; nummod = 0; begun = false; nran = 0;
   this.nthreads = nthreads;
-  this.useNative = useNative;
 
 @ @<Reinitialize plots and parameters@>=
   plotPix.reset();
@@ -63,7 +61,7 @@
       for (int l=0; l<survey.size(); l++)
         { Lens lens = (Lens) survey.elementAt(l); lens.setup(mods);
         }
-      pack_simplex();  @/
+      pack_simplex();
       begun = true;  @/
     }
 
@@ -215,31 +213,15 @@
 
 
 @ @<Packing the simplex@>=
-  int[] sizes,lo,hi; int nsiz;
-  double[] pack(int l, double[] arr)
-    { int s; double[] out = new double[nsiz+1];
-      for (int i=0; i<out.length; i++) out[i] = 0;
-      out[0] = arr[0];
-      if (l==0) s = 0;
-      else s = hi[l-1];
-      for (int i=lo[l]; i<=hi[l]; i++) out[i] = arr[i-s];
-      return out;
-    }
-  double[] unpack(int l, double[] arr)
-    { int s; double[] out = new double[sizes[l]+1];
-      for (int i=0; i<out.length; i++) out[i] = 0;
-      out[0] = 0;
-      if (l==0) s = 0;
-      else s = hi[l-1];
-      for (int i=lo[l]; i<=hi[l]; i++) out[i-s] = arr[i];
-      return out;
-    }
+  int nsiz;
 
 
 
 @ @<Packing the simplex@>=
   void pack_simplex()
-    { @<Work out simplex-packing sizes@>
+    { 
+      Lens llens = (Lens) survey.elementAt(0);
+      nsiz = llens.nunk;
       if (simp != null) simp.interrupt();
       simp = new Simpwalk(nthreads);
       simp.init(nsiz);
@@ -247,34 +229,24 @@
       @<Put lensing constraints into simplex@>
     }
 
-@ @<Work out simplex-packing sizes@>=
-  sizes = new int[survey.size()];
-  lo = new int[sizes.length]; hi = new int[sizes.length];
-  for (int l=0; l<survey.size(); l++)
-    { Lens lens = (Lens) survey.elementAt(l);
-      sizes[l] = lens.nunk;
-      if (l==0)
-        { lo[0] = 1; hi[0] = sizes[0]; nsiz = hi[0];
-        }
-      else
-        { lo[l] = nsiz+1; hi[l] = nsiz+sizes[l]; nsiz = hi[l];
-        }
-    }
 
 @ @<Put lensing constraints into simplex@>=
   for (int l=0; l<survey.size(); l++)
     { Lens lens = (Lens) survey.elementAt(l);  double[] row;
       for (int k=0; k<lens.geq.size(); k++)
         { row = (double[]) lens.geq.elementAt(k);
-          simp.set_geq(pack(l,row));
+//          simp.set_geq(pack(l,row));
+          simp.set_geq(row);
         }
       for (int k=0; k<lens.leq.size(); k++)
         { row = (double[]) lens.leq.elementAt(k);
-          simp.set_leq(pack(l,row));
+//          simp.set_leq(pack(l,row));
+          simp.set_leq(row);
         }
       for (int k=0; k<lens.eq.size(); k++)
         { row = (double[]) lens.eq.elementAt(k);
-          simp.set_eq(pack(l,row));
+//          simp.set_eq(pack(l,row));
+          simp.set_eq(row);
         }
        System.out.println("Simplex "+lens.nunk+" "+
          lens.geq.size()+" "+lens.leq.size()+" "+lens.eq.size());
@@ -302,9 +274,11 @@
   for (int l=0; l<survey.size(); l++)
     { Lens lens = (Lens) survey.elementAt(l);
       synchronized (lens)
-        { lens.test_constraints(unpack(l,sol));  @/
-          lens.update_mass(); lens.update_poten();  @/
-          lens.update(unpack(l,nsol),nummod);
+        { // lens.test_constraints(unpack(l,sol));
+          lens.test_constraints(sol);
+          lens.update_mass(); lens.update_poten();
+          // lens.update(unpack(l,nsol),nummod);
+          lens.update(nsol,nummod);
         }
     }
 
