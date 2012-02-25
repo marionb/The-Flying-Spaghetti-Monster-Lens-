@@ -23,9 +23,6 @@
 @ @<Layout for the |PixeLens| GUI@>=
   int threads=8;
   static boolean quiet = false;
-  static String PixeLensName = "PixeLens";
-  static String PixeLensVersion = "2.17";
-  static boolean useNative = false;
 
 @ @<Layout for the |PixeLens| GUI@>=
   public static void main(String[] args)
@@ -35,12 +32,12 @@
 
 @ @<Layout for the |PixeLens| GUI@>=
   public void main()
-    { lenses = new Lenses(threads, useNative);
+    { lenses = new Lenses(threads);
       @<Put control buttons to North@>
       @<Put text panels to West@>
       @<Put plots to East@>
       setWaiting();
-      show(PixeLensName + " version " + PixeLensVersion, "Show PixeLens window");
+      show("Reduced PixeLens version 1.0", "Show PixeLens window");
     }
 
 @ @<Print startup information@>=

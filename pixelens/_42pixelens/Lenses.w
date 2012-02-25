@@ -31,10 +31,6 @@
 
 @ @<Fields and constructor for |Lenses|@>=
   public Lenses(int nthreads)
-    { this(nthreads, false);
-    }
-
-  public Lenses(int nthreads, boolean useNative)
     { @<Initialize plots and parameters@>
     }
 

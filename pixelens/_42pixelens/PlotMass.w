@@ -22,7 +22,7 @@
   LensBase lens;  @/
   double zm,cstep;  @/
   InputField zm_txt,cstep_txt;  @/
-  int chfl=1; JComboBox choice; double[][] grid;  @/
+  double[][] grid;  @/
 
 
 @ @<Generic stuff in |PlotMass|@>=
@@ -41,13 +41,7 @@
 
 @ @<Set up input fields in |PlotMass|@>=
   if (Dual.mode() != 0)
-    { choice = new JComboBox();  @/
-      choice.addItem("tot");
-      choice.addItem("prim"); choice.addItem("sec");
-      choice.addItem("errs");  choice.addItem("ensem");  @/
-      choice.addActionListener(this);  @/
-      hook.add(choice);  @/
-      cstep_txt = new InputField("step",5," ",hook);
+    { cstep_txt = new InputField("step",5," ",hook);
       cstep_txt.addActionListener(this);  @/
       zm_txt = new InputField("zm",3," ",hook);
       zm_txt.addActionListener(this);  @/
@@ -69,16 +63,8 @@
 @ @<Event handler in |PlotMass|@>=
   public void actionPerformed(ActionEvent event)
     { Object src = event.getSource();
-      if (src instanceof JComboBox)
-        { String str = (String) choice.getSelectedItem();
-          if (str.compareTo("tot")==0)  chfl = 1;
-          if (str.compareTo("prim")==0)  chfl = 2;
-          if (str.compareTo("sec")==0)  chfl = 3;
-          if (str.compareTo("errs")==0)  chfl = 4;
-          if (str.compareTo("ensem")==0)  chfl = 5;
-        }
       if (lens!=null)
-        if ((src instanceof JComboBox) || (src instanceof InputField))
+        if (src instanceof InputField)
           { @<Read the |InputField|s in |PlotMass|@>
             plot();
           }
@@ -123,32 +109,15 @@
     for (int j=0; j<=ZB; j++)
       { double m1,m2;  @/
         m1 = lens.mass_grid[ZB+i][ZB+j]; m2 = lens.mass_grid[ZB-i][ZB-j];
-        @<Check |chfl| and set |grid[][]|@>
+        grid[ZB+i][ZB+j] = m1; grid[ZB-i][ZB-j] = m2;
       }
-
-@ @<Check |chfl| and set |grid[][]|@>=
-  if (chfl==1 || chfl>3)
-    { grid[ZB+i][ZB+j] = m1; grid[ZB-i][ZB-j] = m2;
-    }
-  if (chfl==2)
-    { if (m1 < m2) grid[ZB+i][ZB+j] = grid[ZB-i][ZB-j] = m1;
-      else grid[ZB+i][ZB+j] = grid[ZB-i][ZB-j] = m2;
-    }
-  if (chfl==3)
-    { grid[ZB+i][ZB+j] = grid[ZB-i][ZB-j] = 0;
-      if (m1 > m2) grid[ZB+i][ZB+j] = m1-m2;
-      if (m2 > m1) grid[ZB-i][ZB-j] = m2-m1;
-    }
-
 
 
 @ @<Set |lev[]| to mass contour levels@>=
   double[] lev;
   if (cstep > 0)
     { lev = new double[1+(int)(lens.sol[1]/cstep)];
-      for (int l=0; l<lev.length; l++)
-      if (chfl==3) lev[l] = (l+1)*cstep;
-      else lev[l] = l*cstep;
+      for (int l=0; l<lev.length; l++) lev[l] = l*cstep;
     }
   else
     { double v; int l;  @/
