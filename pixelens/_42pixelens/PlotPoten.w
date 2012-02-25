@@ -20,9 +20,9 @@
 
 
 @ @<Generic stuff in |PlotPoten|@>=
-  Vector surv;  LensBase lens;  @/
-  int nobj,obj;  double cstep,exag,zm;  @/
-  InputField obj_txt,cstep_txt,exag_txt,zm_txt;
+  LensBase lens;  @/
+  double cstep,exag,zm;  @/
+  InputField cstep_txt,exag_txt,zm_txt;
 
 
 @ @<Generic stuff in |PlotPoten|@>=
@@ -41,9 +41,7 @@
 
 @ @<Set up input fields in |PlotPoten|@>=
   if (Dual.mode() != 0)
-    { obj_txt = new InputField("obj",1," ",hook);
-      obj_txt.addActionListener(this);  @/
-      cstep_txt = new InputField("step",4," ",hook);
+    { cstep_txt = new InputField("step",4," ",hook);
       cstep_txt.addActionListener(this);  @/
       exag_txt = new InputField("ex",3," ",hook);
       exag_txt.addActionListener(this);  @/
@@ -53,23 +51,22 @@
 
 
 @ @<Initialize fields in |PlotPoten|@>=
-  surv = null; lens = null;  @/
-  nobj = 1;
+  lens = null;  @/
   if (Dual.mode() != 0)
-    { obj_txt.setText("1");  cstep_txt.setText("0");
+    { cstep_txt.setText("0");
       exag_txt.setText("1");  zm_txt.setText("1");
     }
-  obj = 0; cstep = 0; exag = 1; zm = 1;
+  cstep = 0; exag = 1; zm = 1;
 
 @ @<Generic stuff in |PlotPoten|@>=
-  public void update(Vector surv)
-    { this.surv = surv; nobj = surv.size(); plot();
+  public void update(LensBase lens)
+    { this.lens = lens; plot();
     }
 
 
 @ @<Event handler in |PlotPoten|@>=
   public void actionPerformed(ActionEvent event)
-    { if (surv!=null)
+    { if (lens!=null)
         if (event.getSource() instanceof InputField)
           { @<Read the |InputField|s in |PlotPoten|@>
             plot();
@@ -78,15 +75,13 @@
 
 
 @ @<Read the |InputField|s in |PlotPoten|@>=
-  obj = obj_txt.readInt(1,nobj) - 1;  @/
   cstep = cstep_txt.readDouble(0,1e6);  @/
   exag = exag_txt.readDouble(0,100);  @/
   zm = zm_txt.readDouble(0.01,5);
 
 @ @<Plotting code in |PlotPoten|@>=
   private void plot()
-    { lens = (LensBase) surv.elementAt(obj);  @/
-      int L = lens.L; double a = lens.a;
+    { int L = lens.L; double a = lens.a;
       int Z= lens.Z; int ZB = lens.ZB; int S=lens.S;
   double[][] grid = new double[Z][Z];
   double[][][] data = new double[lens.imsys.size()][][];

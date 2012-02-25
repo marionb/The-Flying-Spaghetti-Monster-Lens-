@@ -9,7 +9,6 @@
       @<Interpreting the input@>
       @<Packing the simplex@>
       @<Searching for models@>
-      @<Saving and recovering the state@>
     }
 
 @ @<Imports for |Lenses|@>=
@@ -23,7 +22,7 @@
   int mods,nummod;  // number of models
   int nthreads; // number of threads for the simplex to use
   boolean useNative; // Use the native version of Simplex
-  boolean begun; String sfname; int nran;
+  boolean begun; int nran;
   Cosm cosm;  @/
   PlotPix plotPix;
   PlotMass plotMass;
@@ -45,7 +44,7 @@
   plotMass   = new PlotMass();
   plotPoten  = new PlotPoten();
   plotArriv  = new PlotArriv();
-  mods = 100; nummod = 0; begun = false; sfname = null; nran = 0;
+  mods = 100; nummod = 0; begun = false; nran = 0;
   this.nthreads = nthreads;
   this.useNative = useNative;
 
@@ -54,7 +53,7 @@
   plotMass.reset();
   plotPoten.reset();
   plotArriv.reset();
-  mods = 100; nummod = 0; begun = false; sfname = null;
+  mods = 100; nummod = 0; begun = false;
 
 
 @ @<Setting up all the lenses@>=
@@ -286,12 +285,9 @@
   public void find_model() throws ErrorMsg, InterruptedException
     { System.out.println("Now for models");
       if (!simp.isAlive()) { simp.start(mods); }
-
-      try {
         for (;; nummod++)
           { @<Update the plots@>
             if (nummod==0) sol = simp.nextSolution(); 
-            if (nummod>0 && sfname!=null) writeEnsem((String)null); 
             if (nummod >= mods) break;
   
             double[] nsol = simp.nextSolution();
@@ -300,9 +296,6 @@
             Dual.message("");
             @<Update the lenses@>
           }
-      } catch (IOException e) {
-          System.err.println(e.getMessage());
-      }
     }
 
 @ @<Update the lenses@>=
@@ -321,91 +314,9 @@
   Lens llens = (Lens) survey.elementAt(0);
   plotPix.update(llens);
   if (nummod > 0)
-    { plotMass.update(survey);
-      plotPoten.update(survey);
-      plotArriv.update(survey);
+    { plotMass.update(llens);
+      plotPoten.update(llens);
+      plotArriv.update(llens);
     }
 
-
-@ @<Saving and recovering the state@>=
-  void setFname(String str)
-    { sfname = str;
-    }
-
-@ @<Saving and recovering the state@>=
-  void writeEnsem(String fname) throws IOException
-    { int m,l,n;
-      if (fname==null)
-        { fname = sfname; m=nummod-1;
-        }
-      else m = 0;
-      if (m==0) write_pmap(fname);
-      BufferedWriter file = new BufferedWriter(new FileWriter(fname,true));
-      if (m==0) file.write("#BEGIN ENSEM\n");
-      for (; m<nummod; m++)
-        { file.write("#BEGIN MODEL\n");
-          for (l=0; l<survey.size(); l++)
-            { Lens lens = (Lens) survey.elementAt(l);
-              for (n=1; n<=sizes[l]; n++)
-                file.write(Double.toString(lens.ensem[m][n])+"\n");
-            }
-          file.write("#END MODEL\n");
-        }
-      if (sfname==null || nummod==mods) file.write("#END ENSEM\n");
-      file.close();
-    }
-
-@ @<Saving and recovering the state@>=
-  void readEnsem(String fname) throws IOException
-    { BufferedReader file = new BufferedReader(new FileReader(fname));
-      sol = new double[nsiz+1];
-      double[] nsol = new double[nsiz+1];
-      for (nummod=0; nummod < mods; nummod++)
-        { while (file.ready())
-            if (file.readLine().startsWith("#BEGIN MODEL")) break;
-          if (!file.ready()) break;
-          for (int n=1; n<=nsiz; )
-            { if (!file.ready()) throw new IOException("Error reading models");
-              String ln = file.readLine();
-              if (!ln.startsWith("#"))
-                { nsol[n] = Double.parseDouble(ln);
-                  if (nummod==0) sol[n] = nsol[n];
-                  else sol[n] = (nummod*sol[n]+nsol[n])/(nummod+1);
-                  n++;
-                }
-            }
-          for (int l=0; l<survey.size(); l++)
-            { Lens lens = (Lens) survey.elementAt(l);  @/
-              lens.update(unpack(l,nsol),nummod);
-            }
-        }
-      file.close();
-      if (nummod==0) throw new IOException("No models to read");
-      Dual.message(nummod+" models read");
-      System.out.println("Read the models");
-      for (int l=0; l<survey.size(); l++)
-        { Lens lens = (Lens) survey.elementAt(l);  @/
-          lens.test_constraints(unpack(l,sol));  @/
-          lens.update_mass(); lens.update_poten();  @/
-        }
-      @<Update the plots@>
-    }
-
-
-@ @<Saving and recovering the state@>=
-  void write_pmap(String fname) throws IOException
-    { Lens lens = (Lens) survey.elementAt(0);
-      int[][] pmap = lens.pmap;
-      int L = lens.L;
-      BufferedWriter file = new BufferedWriter(new FileWriter(fname, true));
-      file.write("#BEGIN PMAP\n");
-      file.write(L + " " + L + "\n");
-      for (int i=-L; i<=L; i++) {
-        for (int j=-L; j<=L; j++)
-          file.write(pmap[L+i][L+j] + " ");
-        file.write("\n");
-      }
-      file.write("#END PMAP\n");
-      file.close();
-    }
 

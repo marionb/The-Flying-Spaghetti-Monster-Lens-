@@ -19,9 +19,9 @@
   import java.awt.Color;
 
 @ @<Generic stuff in |PlotMass|@>=
-  Vector surv;  LensBase lens;  @/
-  int nobj,obj;  double zm,cstep;  @/
-  InputField obj_txt,zm_txt,cstep_txt;  @/
+  LensBase lens;  @/
+  double zm,cstep;  @/
+  InputField zm_txt,cstep_txt;  @/
   int chfl=1; JComboBox choice; double[][] grid;  @/
 
 
@@ -41,9 +41,7 @@
 
 @ @<Set up input fields in |PlotMass|@>=
   if (Dual.mode() != 0)
-    { obj_txt = new InputField("obj",1," ",hook);
-      obj_txt.addActionListener(this);  @/
-      choice = new JComboBox();  @/
+    { choice = new JComboBox();  @/
       choice.addItem("tot");
       choice.addItem("prim"); choice.addItem("sec");
       choice.addItem("errs");  choice.addItem("ensem");  @/
@@ -56,16 +54,15 @@
     }
 
 @ @<Initialize fields in |PlotMass|@>=
-  surv = null; lens = null; grid = null;
+  lens = null; grid = null;
   if (Dual.mode() != 0)
-    { obj_txt.set(1); cstep_txt.set(-2.512);  zm_txt.set(1);
+    { cstep_txt.set(-2.512);  zm_txt.set(1);
     }
-  nobj = 1;
-  obj = 0; cstep = -2.512; zm = 1;
+  cstep = -2.512; zm = 1;
 
 @ @<Generic stuff in |PlotMass|@>=
-  public void update(Vector surv)
-    { this.surv = surv; nobj = surv.size(); plot();
+  public void update(LensBase lens)
+    { this.lens = lens; plot();
     }
 
 
@@ -80,7 +77,7 @@
           if (str.compareTo("errs")==0)  chfl = 4;
           if (str.compareTo("ensem")==0)  chfl = 5;
         }
-      if (surv!=null)
+      if (lens!=null)
         if ((src instanceof JComboBox) || (src instanceof InputField))
           { @<Read the |InputField|s in |PlotMass|@>
             plot();
@@ -88,15 +85,13 @@
     }
 
 @ @<Read the |InputField|s in |PlotMass|@>=
-  obj = obj_txt.readInt(1,nobj) - 1;  @/
   cstep = cstep_txt.readDouble(-10,10);
   if (cstep < 0 && cstep > -1) cstep_txt.set(--cstep);
   zm = zm_txt.readDouble(0.01,5);
 
 @ @<Plotting code in |PlotMass|@>=
   private void plot()
-    { lens = (LensBase) surv.elementAt(obj);  @/
-      int L = lens.L; double a = lens.a;
+    { int L = lens.L; double a = lens.a;
       int Z = lens.Z; int ZB = lens.ZB; int S=lens.S;  @/
       erase(); drawAxes(zm*(L+1)*a);
       double[] lim = new double[4];  @/
