@@ -37,11 +37,10 @@
       @<Put text panels to West@>
       @<Put plots to East@>
       setWaiting();
-      show("Reduced PixeLens version 1.0", "Show PixeLens window");
+      show("Lens model applet version 0.1", "Show window");
     }
 
 @ @<Print startup information@>=
-  message(PixeLensName + " " + PixeLensVersion);
   message("Using " + threads + " thread(s)");
   String tag = "B";
   double mem = (double)Runtime.getRuntime().maxMemory();

@@ -18,7 +18,7 @@
 
 @ The fields are that need to be remembered through a pause.
 @<Fields and constructor for |Lenses|@>=
-  Vector survey;  Simpwalk simp;  double[] sol=null;  @/
+  Lens lens;  Simpwalk simp;  double[] sol=null;  @/
   int mods,nummod;  // number of models
   int nthreads; // number of threads for the simplex to use
   boolean begun; int nran;
@@ -54,9 +54,7 @@
   void setup(String user_inp) throws ErrorMsg
     { @<Reinitialize plots and parameters@>
       read_input(user_inp);
-      for (int l=0; l<survey.size(); l++)
-        { Lens lens = (Lens) survey.elementAt(l); lens.setup(mods);
-        }
+      lens.setup(mods);
       pack_simplex();
       begun = true;  @/
     }
@@ -74,8 +72,7 @@
 
 @ @<Interpreting the input@>=
   void read_input(String user_inp) throws ErrorMsg
-    { survey = new Vector();  @/
-      Lens lens=null; double[][][] data = null;  @/
+    { lens=null; double[][][] data = null;  @/
       inptoks = new StringTokenizer(user_inp);
       int zflag = 0;
       try
@@ -90,7 +87,7 @@
       catch (NumberFormatException ex)
         { throw new ErrorMsg(ex.getMessage()+" not legal number here");
         }
-      if (survey.size()==0) throw new ErrorMsg("No data");
+      if (lens==null) throw new ErrorMsg("No data");
     }
 
 
@@ -149,7 +146,6 @@
 
 @ @<Allocate a new |lens|@>=
   lens = new Lens();  lens.nickname = inptoks.nextToken();
-  survey.addElement(lens);  @/
   zflag = 0;
 
 @ @<Set |lens.S|@>=
@@ -216,8 +212,7 @@
 @ @<Packing the simplex@>=
   void pack_simplex()
     { 
-      Lens llens = (Lens) survey.elementAt(0);
-      nsiz = llens.nunk;
+      nsiz = lens.nunk;
       if (simp != null) simp.interrupt();
       simp = new Simpwalk(nthreads);
       simp.init(nsiz);
@@ -227,26 +222,22 @@
 
 
 @ @<Put lensing constraints into simplex@>=
-  for (int l=0; l<survey.size(); l++)
-    { Lens lens = (Lens) survey.elementAt(l);  double[] row;
+      double[] row;
       for (int k=0; k<lens.geq.size(); k++)
         { row = (double[]) lens.geq.elementAt(k);
-//          simp.set_geq(pack(l,row));
           simp.set_geq(row);
         }
       for (int k=0; k<lens.leq.size(); k++)
         { row = (double[]) lens.leq.elementAt(k);
-//          simp.set_leq(pack(l,row));
           simp.set_leq(row);
         }
       for (int k=0; k<lens.eq.size(); k++)
         { row = (double[]) lens.eq.elementAt(k);
-//          simp.set_eq(pack(l,row));
           simp.set_eq(row);
         }
        System.out.println("Simplex "+lens.nunk+" "+
          lens.geq.size()+" "+lens.leq.size()+" "+lens.eq.size());
-    }
+
 
 
 @ @<Searching for models@>=
@@ -267,8 +258,6 @@
     }
 
 @ @<Update the lenses@>=
-  for (int l=0; l<survey.size(); l++)
-    { Lens lens = (Lens) survey.elementAt(l);
       synchronized (lens)
         { // lens.test_constraints(unpack(l,sol));
           lens.test_constraints(sol);
@@ -276,17 +265,15 @@
           // lens.update(unpack(l,nsol),nummod);
           lens.update(nsol,nummod);
         }
-    }
 
 
 
 @ @<Update the plots@>=
-  Lens llens = (Lens) survey.elementAt(0);
-  plotPix.update(llens);
+  plotPix.update(lens);
   if (nummod > 0)
-    { plotMass.update(llens);
-      plotPoten.update(llens);
-      plotArriv.update(llens);
+    { plotMass.update(lens);
+      plotPoten.update(lens);
+      plotArriv.update(lens);
     }
 
 
