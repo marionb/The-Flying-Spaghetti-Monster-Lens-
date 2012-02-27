@@ -33,6 +33,8 @@ function castles(id)
 
 function lens(id,long_id)
   { document.write('</p></td></tr>');
-    document.write('<tr><td>',id,'&nbsp&nbsp</td>');
-    document.write('<td><a href=indiv/',id,'>image positions</a></td>');
+    document.write('<tr><td>',id);
+    document.write('&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>');
+    document.write('<td><a href=indiv/',id,'.txt>multiple-image coords</a>');
+    document.write('&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>');
   }
