@@ -1,0 +1,2 @@
+*.fits  # we don't want those huge binary files in the repro
+out.jpg # dont add the sample output file
